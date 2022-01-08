@@ -1,7 +1,3 @@
-import Head from "next/head";
-import Footer from "../components/Footer";
-import NavBar from "../components/NavBar";
-
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -13,17 +9,3 @@ const firebaseConfig = {
   appId: "1:144517854009:web:ad208b8ecb50f6430aaee8",
 };
 const app = initializeApp(firebaseConfig);
-
-export default function App({ Component, pageProps }) {
-  return (
-    <div>
-      <NavBar />
-      <Head>
-        <title>jaewoogwak.log</title>
-      </Head>
-      <Component {...pageProps} />
-
-      {/* <Footer /> */}
-    </div>
-  );
-}

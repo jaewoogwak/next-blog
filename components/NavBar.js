@@ -13,9 +13,9 @@ export default function NavBar() {
         <Link href={`/about`}>
           <a>About</a>
         </Link>
-        <Link href={`/posts`}>
+        {/* <Link href={`/posts`}>
           <a>Post</a>
-        </Link>
+        </Link> */}
       </div>
 
       <style jsx>{`

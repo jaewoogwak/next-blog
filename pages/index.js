@@ -1,8 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
+  const [user, setUser] = useState();
   const [list, setList] = useState([
     {
       title: "test title",
@@ -30,27 +32,63 @@ export default function Home() {
     },
   ]);
 
+  const userSignOut = () => {
+    const auth = getAuth();
+    // console.log(auth)
+    signOut(auth)
+      .then(() => {
+        console.log("sign out");
+        // Sign-out successful.
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
+  useEffect(() => {
+    const auth = getAuth();
+    console.log("auth", auth);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log(user);
+        setUser(user);
+        // ...
+      } else {
+      }
+    });
+  });
   return (
-    <div className="container">
-      <div className="profile zone">profile zone</div>
+    <div>
+      {user ? (
+        <div className="container">
+          <div className="profile zone">
+            {user.email}
+            <button onClick={userSignOut}>Sign out</button>
+          </div>
 
-      <div className="post-zone">
-        <h1>Post </h1>
-        <div className="post-list">
-          {list.map((post) => (
-            <div className="post" key={post.id}>
-              <Link href={`/posts/${post.id}`}>
-                <a>
-                  <h2>{post.title}</h2>
-                </a>
-              </Link>
+          <div className="post-zone">
+            <h1>Post </h1>
+            <button>add post</button>
+            <div className="post-list">
+              {list.map((post) => (
+                <div className="post" key={post.id}>
+                  <Link href={`/posts/${post.id}`}>
+                    <a>
+                      <h2>{post.title}</h2>
+                    </a>
+                  </Link>
 
-              <h4>{post.date}</h4>
-              <h5>{post.description}</h5>
+                  <h4>{post.date}</h4>
+                  <h5>{post.description}</h5>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <>Not Logged in</>
+      )}
       <style jsx>{`
         .container {
           display: flex;
