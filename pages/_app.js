@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCt9gvysOlGedJyKfN8hqekBGUfI7PdPX8",
@@ -27,3 +28,5 @@ export default function App({ Component, pageProps }) {
     </div>
   );
 }
+
+export const db = getFirestore();

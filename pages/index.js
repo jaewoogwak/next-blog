@@ -1,34 +1,20 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./_app";
 export default function Home() {
   const [user, setUser] = useState();
+  const route = useRouter();
   const [list, setList] = useState([
     {
       title: "test title",
       date: "2022-01-08",
       description: "이 글은 테스트를 위해서 작성되었습니다.",
+      mainText: "본문",
       id: 1,
-    },
-    {
-      title: "test title",
-      date: "2022-01-08",
-      description: "이 글은 테스트를 위해서 작성되었습니다.",
-      id: 2,
-    },
-    {
-      title: "test title",
-      date: "2022-01-08",
-      description: "이 글은 테스트를 위해서 작성되었습니다.",
-      id: 3,
-    },
-    {
-      title: "test title",
-      date: "2022-01-08",
-      description: "이 글은 테스트를 위해서 작성되었습니다.",
-      id: 4,
     },
   ]);
 
@@ -39,13 +25,32 @@ export default function Home() {
       .then(() => {
         console.log("sign out");
         // Sign-out successful.
+        setUser(null);
+        route.push(`/login`);
       })
       .catch((error) => {
         // An error happened.
+        console.log(error);
       });
   };
 
-  useEffect(() => {
+  const readData = async () => {
+    console.log("read data");
+    const querySnapshot = await getDocs(collection(db, "post"));
+    querySnapshot.forEach((doc) => {
+      // console.log(`data : ${doc.id} => ${doc.data().title}`);
+      const dbPost = {
+        title: doc.data().title,
+        mainText: doc.data().mainText,
+        date: doc.data().date,
+        id: doc.id,
+      };
+      console.log(dbPost);
+      setList((prev) => [...prev, dbPost]);
+    });
+  };
+
+  useEffect(async () => {
     const auth = getAuth();
     console.log("auth", auth);
     onAuthStateChanged(auth, (user) => {
@@ -57,7 +62,8 @@ export default function Home() {
       } else {
       }
     });
-  });
+    readData();
+  }, []);
   return (
     <div>
       {user ? (
@@ -69,7 +75,12 @@ export default function Home() {
 
           <div className="post-zone">
             <h1>Post </h1>
-            <button>add post</button>
+            <Link href={`/addPost`}>
+              <a>
+                <button>add post</button>
+              </a>
+            </Link>
+
             <div className="post-list">
               {list.map((post) => (
                 <div className="post" key={post.id}>
