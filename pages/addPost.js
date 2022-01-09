@@ -1,17 +1,22 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { db } from "./_app";
 import { collection, addDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/router";
 
 export default function addPost() {
+  const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
   const [mainText, setMainText] = useState("");
+  const router = useRouter();
 
   const onChange = (event) => {
     const { name, value } = event.target;
     if (name === "title") setTitle(value);
     else if (name === "main") setMainText(value);
   };
+  console.log("user info in addPage", user);
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -21,18 +26,35 @@ export default function addPost() {
       title: title,
       mainText: mainText,
       date: "임시 날짜",
+      uid: user.uid,
     };
     try {
       const docRef = await addDoc(collection(db, "post"), {
         title: newPost.title,
         mainText: newPost.mainText,
         date: "임시날짜",
+        uid: newPost.uid,
       });
       console.log("Document written with ID: ", docRef.id);
+      router.push(`/`);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
+
+  useEffect(async () => {
+    const auth = getAuth();
+    console.log("auth", auth);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log(user);
+        setUser(user);
+        // ...
+      } else {
+      }
+    });
+  }, []);
   return (
     <div>
       포스트작성하는곳

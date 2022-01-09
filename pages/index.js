@@ -6,7 +6,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./_app";
 export default function Home() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const route = useRouter();
   const [list, setList] = useState([
     {
@@ -15,6 +15,7 @@ export default function Home() {
       description: "이 글은 테스트를 위해서 작성되었습니다.",
       mainText: "본문",
       id: 1,
+      uid: "",
     },
   ]);
 
@@ -44,6 +45,7 @@ export default function Home() {
         mainText: doc.data().mainText,
         date: doc.data().date,
         id: doc.id,
+        uid: doc.data().uid,
       };
       console.log(dbPost);
       setList((prev) => [...prev, dbPost]);
@@ -55,7 +57,7 @@ export default function Home() {
     console.log("auth", auth);
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
+        // const uid = user.uid;
         console.log(user);
         setUser(user);
         // ...
@@ -84,12 +86,13 @@ export default function Home() {
             <div className="post-list">
               {list.map((post) => (
                 <div className="post" key={post.id}>
-                  <Link href={`/posts/${post.id}`}>
+                  <Link
+                    href={`/posts/${post.id}/${post.title}/${post.mainText}/${post.date}/${post.uid}`}
+                  >
                     <a>
                       <h2>{post.title}</h2>
                     </a>
                   </Link>
-
                   <h4>{post.date}</h4>
                   <h5>{post.description}</h5>
                 </div>

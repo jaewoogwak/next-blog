@@ -4,6 +4,8 @@ import NavBar from "../components/NavBar";
 
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCt9gvysOlGedJyKfN8hqekBGUfI7PdPX8",
@@ -16,6 +18,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export default function App({ Component, pageProps }) {
+  const [user, setUser] = useState(null);
+  console.log("user info in app start", user);
+  useEffect(async () => {
+    const auth = getAuth();
+    console.log("auth", auth);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log(user);
+        setUser(user);
+        // ...
+      } else {
+      }
+    });
+  }, []);
   return (
     <div>
       <NavBar />
