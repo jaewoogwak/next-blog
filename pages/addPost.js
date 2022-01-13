@@ -41,6 +41,7 @@ export default function addPost() {
       date: date,
       uid: user.uid,
       imgName: image.name,
+      // id: Date.now(),
     };
     try {
       const docRef = await addDoc(collection(db, "post"), {
@@ -49,6 +50,7 @@ export default function addPost() {
         date: newPost.date,
         uid: newPost.uid,
         imgName: newPost.imgName,
+        // id: Date.now(),
       });
       console.log("Document written with ID: ", docRef.id);
       router.push(`/`);
