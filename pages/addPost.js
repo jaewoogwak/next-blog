@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { db } from "./_app";
+import { storage } from "./_app";
 import { collection, addDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import { useRouter } from "next/router";
 
 export default function addPost() {
   const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
   const [mainText, setMainText] = useState("");
+  const [image, setImage] = useState();
   const router = useRouter();
 
   const onChange = (event) => {
@@ -20,26 +24,55 @@ export default function addPost() {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    console.log("title", title);
-    console.log("main text", mainText);
+    const date = setDate();
+
+    const imageRef = ref(storage, `${image.name}`);
+    console.log(image.name);
+    console.log("imageRef", imageRef);
+    const imageData = await uploadBytes(imageRef, image);
+    console.log("imageData", imageData);
+
+    // let storageRef = storage.ref();
+    // let saveRef = storageRef.child("image/" + image.name);
+    // let upload = saveRef.put
     const newPost = {
       title: title,
       mainText: mainText,
-      date: "임시 날짜",
+      date: date,
       uid: user.uid,
+      imgName: image.name,
     };
     try {
       const docRef = await addDoc(collection(db, "post"), {
         title: newPost.title,
         mainText: newPost.mainText,
-        date: "임시날짜",
+        date: newPost.date,
         uid: newPost.uid,
+        imgName: newPost.imgName,
       });
       console.log("Document written with ID: ", docRef.id);
       router.push(`/`);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+  };
+
+  const onImgChange = (event) => {
+    const formData = new FormData();
+    formData.append("file", event.target.files[0]);
+    const file = event.target.files[0];
+    console.log(file.name);
+    // console.log("formdata", formData, event.target.files[0]);
+    setImage(file);
+    // const imageRef = ref(storage, form)
+  };
+  const setDate = () => {
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = ("0" + (today.getMonth() + 1)).slice(-2);
+    var day = ("0" + today.getDate()).slice(-2);
+    var dateString = year + "-" + month + "-" + day;
+    return dateString;
   };
 
   useEffect(async () => {
@@ -71,6 +104,12 @@ export default function addPost() {
             value={title}
             onChange={onChange}
           ></input>
+          <input
+            type="file"
+            accept="image/*"
+            name="file"
+            onChange={onImgChange}
+          />
           <input
             className="main"
             type="text"

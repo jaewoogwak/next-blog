@@ -46,6 +46,7 @@ export default function Home() {
         date: doc.data().date,
         id: doc.id,
         uid: doc.data().uid,
+        imgName: doc.data().imgName,
       };
       console.log(dbPost);
       setList((prev) => [...prev, dbPost]);
@@ -87,7 +88,7 @@ export default function Home() {
               {list.map((post) => (
                 <div className="post" key={post.id}>
                   <Link
-                    href={`/posts/${post.id}/${post.title}/${post.mainText}/${post.date}/${post.uid}`}
+                    href={`/posts/${post.id}/${post.title}/${post.mainText}/${post.date}/${post.uid}/${post.imgName}`}
                   >
                     <a>
                       <h2>{post.title}</h2>
