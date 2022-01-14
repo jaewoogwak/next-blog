@@ -29,7 +29,7 @@ export default function post() {
       } else {
       }
     });
-    downloadImg();
+    if (imgName != undefined) downloadImg();
     editValue();
   }, [imgName]);
 
@@ -108,7 +108,7 @@ export default function post() {
               value={edit_title}
               onChange={onEditChange}
             ></input>
-            {/* <input type="file" accept="image/*" name="file" value=""/> */}
+            <input type="file" accept="image/*" name="file" value="" />
             <input
               className="main"
               type="text"
@@ -131,7 +131,10 @@ export default function post() {
             <h2>{title}</h2>
             <h4>{date}</h4>
             <h5>{imgName}</h5>
-            <img src={image} alt="image" width={50} height={50} />
+            {imgName ? (
+              <img src={image} alt="image" width={50} height={50} />
+            ) : null}
+
             <h5>{mainText}</h5>
           </div>
         </div>

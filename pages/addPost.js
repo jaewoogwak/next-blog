@@ -13,6 +13,7 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [mainText, setMainText] = useState("");
   const [image, setImage] = useState();
+  const [imgName, setImgName] = useState("");
   const router = useRouter();
 
   const onChange = (event) => {
@@ -25,37 +26,59 @@ export default function addPost() {
   const onSubmit = async (event) => {
     event.preventDefault();
     const date = setDate();
+    if (image != undefined) {
+      const imageRef = ref(storage, `${image.name}`);
+      console.log(image);
+      console.log("imageRef", imageRef);
+      const imageData = await uploadBytes(imageRef, image);
+      console.log("imageData", imageData);
 
-    const imageRef = ref(storage, `${image.name}`);
-    console.log(image.name);
-    console.log("imageRef", imageRef);
-    const imageData = await uploadBytes(imageRef, image);
-    console.log("imageData", imageData);
-
-    // let storageRef = storage.ref();
-    // let saveRef = storageRef.child("image/" + image.name);
-    // let upload = saveRef.put
-    const newPost = {
-      title: title,
-      mainText: mainText,
-      date: date,
-      uid: user.uid,
-      imgName: image.name,
-      // id: Date.now(),
-    };
-    try {
-      const docRef = await addDoc(collection(db, "post"), {
-        title: newPost.title,
-        mainText: newPost.mainText,
-        date: newPost.date,
-        uid: newPost.uid,
-        imgName: newPost.imgName,
+      const newPost = {
+        title: title,
+        mainText: mainText,
+        date: date,
+        uid: user.uid,
+        imgName: image.name,
         // id: Date.now(),
-      });
-      console.log("Document written with ID: ", docRef.id);
-      router.push(`/`);
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      };
+      try {
+        const docRef = await addDoc(collection(db, "post"), {
+          title: newPost.title,
+          mainText: newPost.mainText,
+          date: newPost.date,
+          uid: newPost.uid,
+          imgName: newPost.imgName,
+          // id: Date.now(),
+        });
+        console.log("Document written with ID: ", docRef.id);
+        router.push(`/`);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    } else if (image === undefined) {
+      console.log("not image post");
+      const newPost = {
+        title: title,
+        mainText: mainText,
+        date: date,
+        uid: user.uid,
+        imgName: "not.jpg",
+        // id: Date.now(),
+      };
+      try {
+        const docRef = await addDoc(collection(db, "post"), {
+          title: newPost.title,
+          mainText: newPost.mainText,
+          date: newPost.date,
+          uid: newPost.uid,
+          imgName: "",
+          // id: Date.now(),
+        });
+        console.log("Document written with ID: ", docRef.id);
+        router.push(`/`);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
     }
   };
 

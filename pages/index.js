@@ -9,14 +9,14 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const route = useRouter();
   const [list, setList] = useState([
-    {
-      title: "test title",
-      date: "2022-01-08",
-      description: "이 글은 테스트를 위해서 작성되었습니다.",
-      mainText: "본문",
-      id: 1,
-      uid: "",
-    },
+    // {
+    //   title: "test title",
+    //   date: "2022-01-08",
+    //   description: "이 글은 테스트를 위해서 작성되었습니다.",
+    //   mainText: "본문",
+    //   id: 1,
+    //   uid: "",
+    // },
   ]);
 
   const userSignOut = () => {
