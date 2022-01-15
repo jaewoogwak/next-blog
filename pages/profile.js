@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
+import LoginView from "../components/LoginView";
 export default function Profile({ userInfo }) {
   console.log("userrrrrr", userInfo);
   const auth = getAuth();
@@ -39,50 +40,62 @@ export default function Profile({ userInfo }) {
   console.log("displayname", displayName);
   return (
     <div>
-      profile
-      <p>user Info</p>
-      <button onClick={onProfileEditToggle}>
-        {profileEditing ? "프로필 수정 취소" : "프로필 수정"}
-      </button>
-      {profileEditing ? (
+      {user ? (
         <div>
-          수정중..
-          <div className="edit-box">
-            <input
-              className="edit-displayName"
-              type="text"
-              name="name"
-              placeholder="닉네임 변경"
-            ></input>
+          <p>user Info</p>
+          <button onClick={onProfileEditToggle}>
+            {profileEditing ? "프로필 수정 취소" : "프로필 수정"}
+          </button>
+          {profileEditing ? (
+            <div>
+              수정중..
+              <div className="edit-box">
+                <input
+                  className="edit-displayName"
+                  type="text"
+                  name="name"
+                  placeholder="닉네임 변경"
+                ></input>
 
-            <input
-              className="edit-profileImage"
-              type="file"
-              name="image"
-            ></input>
-            <button className="profile-update-button" onClick={onProfileUpdate}>
-              profile update
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div>
-          {user && (
-            <div className="profile-box">
-              <img
-                className="profile-image"
-                src={user.photoURL || "/default.jpg"}
-                width={100}
-                height={100}
-              />
-              <h3 className="profile-displayName">
-                {displayName || "익명의 사용자"}
-              </h3>
-              <h4 className="profile-email">{user.email}</h4>{" "}
+                <input
+                  className="edit-profileImage"
+                  type="file"
+                  name="image"
+                ></input>
+                <button
+                  className="profile-update-button"
+                  onClick={onProfileUpdate}
+                >
+                  profile update
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {user && (
+                <div className="profile-box">
+                  <img
+                    className="profile-image"
+                    src={user.photoURL || "/default.jpg"}
+                    width={100}
+                    height={100}
+                  />
+                  <h3 className="profile-displayName">
+                    {displayName || "익명의 사용자"}
+                  </h3>
+                  <h4 className="profile-email">{user.email}</h4>{" "}
+                </div>
+              )}
             </div>
           )}
         </div>
+      ) : (
+        <>
+          <>Not Logged In</>
+          <LoginView />
+        </>
       )}
+
       <style jsx>
         {`
           .profile-box {

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./_app";
+import LoginView from "../components/LoginView";
 export default function Home({ postList }) {
   const [user, setUser] = useState(null);
   const route = useRouter();
@@ -98,7 +99,10 @@ export default function Home({ postList }) {
           </div>
         </div>
       ) : (
-        <>Not Logged in</>
+        <>
+          <>Not Logged in</>
+          <LoginView />
+        </>
       )}
       <style jsx>{`
         .container {
