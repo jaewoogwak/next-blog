@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./_app";
-export default function Home() {
+export default function Home({ postList }) {
   const [user, setUser] = useState(null);
   const route = useRouter();
   const [list, setList] = useState([
@@ -36,24 +36,7 @@ export default function Home() {
   };
 
   const readData = async () => {
-    console.log("read data");
-    const querySnapshot = await getDocs(collection(db, "post"));
-    let tmpList = [];
-    querySnapshot.forEach((doc) => {
-      // console.log(`data : ${doc.id} => ${doc.data().title}`);
-      const dbPost = {
-        title: doc.data().title,
-        mainText: doc.data().mainText,
-        date: doc.data().date,
-        id: doc.id,
-        uid: doc.data().uid,
-        imgName: doc.data().imgName,
-      };
-      console.log(dbPost);
-      tmpList.push(dbPost);
-      // setList((prev) => [...prev, dbPost]);
-    });
-    setList(tmpList);
+    setList(postList);
   };
 
   useEffect(async () => {
@@ -69,7 +52,7 @@ export default function Home() {
       }
     });
     readData();
-  }, []);
+  }, [postList]);
   return (
     <div>
       {user ? (

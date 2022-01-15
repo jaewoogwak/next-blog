@@ -7,9 +7,11 @@ import { getFirestore } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import { collection, getDocs } from "firebase/firestore";
+import { API_KEY } from "../key";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCt9gvysOlGedJyKfN8hqekBGUfI7PdPX8",
+  apiKey: API_KEY,
   authDomain: "forum-6b745.firebaseapp.com",
   projectId: "forum-6b745",
   // databaseURL:
@@ -18,10 +20,15 @@ const firebaseConfig = {
   messagingSenderId: "144517854009",
   appId: "1:144517854009:web:ad208b8ecb50f6430aaee8",
 };
+
 const app = initializeApp(firebaseConfig);
+const db = getFirestore();
+const storage = getStorage(app);
 
 export default function App({ Component, pageProps }) {
   const [user, setUser] = useState(null);
+  const [list, setList] = useState([]);
+
   console.log("user info in app start", user);
   useEffect(async () => {
     const auth = getAuth();
@@ -35,19 +42,42 @@ export default function App({ Component, pageProps }) {
       } else {
       }
     });
+    readData();
   }, []);
+
+  const readData = async () => {
+    console.log("read data");
+    const querySnapshot = await getDocs(collection(db, "post"));
+    let tmpList = [];
+    querySnapshot.forEach((doc) => {
+      // console.log(`data : ${doc.id} => ${doc.data().title}`);
+      const dbPost = {
+        title: doc.data().title,
+        mainText: doc.data().mainText,
+        date: doc.data().date,
+        id: doc.id,
+        uid: doc.data().uid,
+        imgName: doc.data().imgName,
+      };
+      console.log(dbPost);
+      tmpList.push(dbPost);
+      // setList((prev) => [...prev, dbPost]);
+    });
+    setList(tmpList);
+  };
+
   return (
     <div>
       <NavBar />
       <Head>
         <title>jaewoogwak.log</title>
       </Head>
-      <Component userInfo={user} />
+      <Component userInfo={user} postList={list} />
 
       {/* <Footer /> */}
     </div>
   );
 }
 
-export const db = getFirestore();
-export const storage = getStorage(app);
+export { db };
+export { storage };
