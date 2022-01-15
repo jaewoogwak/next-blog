@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }) {
       <Head>
         <title>jaewoogwak.log</title>
       </Head>
-      <Component {...pageProps} />
+      <Component userInfo={user} />
 
       {/* <Footer /> */}
     </div>

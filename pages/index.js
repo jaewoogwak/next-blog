@@ -38,6 +38,7 @@ export default function Home() {
   const readData = async () => {
     console.log("read data");
     const querySnapshot = await getDocs(collection(db, "post"));
+    let tmpList = [];
     querySnapshot.forEach((doc) => {
       // console.log(`data : ${doc.id} => ${doc.data().title}`);
       const dbPost = {
@@ -49,8 +50,10 @@ export default function Home() {
         imgName: doc.data().imgName,
       };
       console.log(dbPost);
-      setList((prev) => [...prev, dbPost]);
+      tmpList.push(dbPost);
+      // setList((prev) => [...prev, dbPost]);
     });
+    setList(tmpList);
   };
 
   useEffect(async () => {
@@ -71,8 +74,17 @@ export default function Home() {
     <div>
       {user ? (
         <div className="container">
-          <div className="profile zone">
-            {user.email}
+          <div className="profile-box">
+            <img
+              className="profile-image"
+              src={user.photoURL || "/default.jpg"}
+              width={100}
+              height={100}
+            />
+            <h3 className="profile-displayName">
+              {user.displayName || "익명의 사용자"}
+            </h3>
+            <h4 className="profile-email">{user.email}</h4>
             <button onClick={userSignOut}>Sign out</button>
           </div>
 
@@ -87,6 +99,7 @@ export default function Home() {
             <div className="post-list">
               {list.map((post) => (
                 <div className="post" key={post.id}>
+                  {console.log("post id ", post.id)}
                   <Link
                     href={`/posts/${post.id}/${post.title}/${post.mainText}/${post.date}/${post.uid}/${post.imgName}`}
                   >
@@ -108,8 +121,11 @@ export default function Home() {
         .container {
           display: flex;
         }
-        .profile {
+        .profile-box {
           flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .post-zone {
           flex: 4;

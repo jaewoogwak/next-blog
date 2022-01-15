@@ -89,7 +89,7 @@ export default function post() {
     set_Edit_mainText(mainText);
   };
   return (
-    <div>
+    <div className="container">
       <Link href={`/`}>
         <a>Back to Home</a>
       </Link>
@@ -121,7 +121,7 @@ export default function post() {
           </form>
         </div>
       ) : (
-        <div>
+        <div className="post">
           post detail
           <div>
             <span>
@@ -141,6 +141,13 @@ export default function post() {
       )}
       <style jsx>
         {`
+          .container {
+            // justify-content: center;
+          }
+          .post {
+            text-align: center;
+          }
+
           .add-post-zone {
           }
           form {

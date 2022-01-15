@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
-
-export default function Profile({ user }) {
-  console.log("userrrrrr", user);
+export default function Profile({ userInfo }) {
+  console.log("userrrrrr", userInfo);
   const auth = getAuth();
-  const [user, setUser] = useState();
-  const [displayName, setDisplayName] = useState("");
+  const [user, setUser] = useState(userInfo);
+  const [displayName, setDisplayName] = useState();
   const [profileEditing, setProfileEditing] = useState(false);
-  console.log(user);
+  console.log("userInfo", user);
 
   //   const [email, setEmail] = useState("");
   //   const [photoURL, setPhotoURL] = useState("");
@@ -28,15 +27,16 @@ export default function Profile({ user }) {
     setProfileEditing((prev) => !prev);
   };
 
-  // useEffect(() => {
-  //   // setUser(userInfo);
-  //   // setProfile();
-  //   setUser(userInfo);
-  //   if (user != null) {
-  //     setDisplayName(user.displayName);
-  //   }
-  // }, [userInfo, displayName]);
+  useEffect(() => {
+    // setUser(userInfo);
+    // setProfile();
+    setUser(userInfo);
+    if (user != null) {
+      setDisplayName(user.displayName);
+    }
+  }, [userInfo, displayName]);
 
+  console.log("displayname", displayName);
   return (
     <div>
       profile
@@ -47,22 +47,71 @@ export default function Profile({ user }) {
       {profileEditing ? (
         <div>
           수정중..
-          <button onClick={onProfileUpdate}>profile update</button>
-          <div></div>
+          <div className="edit-box">
+            <input
+              className="edit-displayName"
+              type="text"
+              name="name"
+              placeholder="닉네임 변경"
+            ></input>
+
+            <input
+              className="edit-profileImage"
+              type="file"
+              name="image"
+            ></input>
+            <button className="profile-update-button" onClick={onProfileUpdate}>
+              profile update
+            </button>
+          </div>
         </div>
       ) : (
         <div>
-          <div>
-            <img src="" />
-            {user && (
-              <div>
-                <h1>{displayName}</h1>
-                <h2>{user.email}</h2>{" "}
-              </div>
-            )}
-          </div>
+          {user && (
+            <div className="profile-box">
+              <img
+                className="profile-image"
+                src={user.photoURL || "/default.jpg"}
+                width={100}
+                height={100}
+              />
+              <h3 className="profile-displayName">
+                {displayName || "익명의 사용자"}
+              </h3>
+              <h4 className="profile-email">{user.email}</h4>{" "}
+            </div>
+          )}
         </div>
       )}
+      <style jsx>
+        {`
+          .profile-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
+          .profile-image {
+          }
+          .profile-displayName {
+          }
+          .edit-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+          }
+          .edit-displayName {
+            width: 400px;
+          }
+          .edit-profileImage {
+            width: 200px;
+          }
+          .profile-update-button {
+            width: 400px;
+          }
+        `}
+      </style>
     </div>
   );
 }
