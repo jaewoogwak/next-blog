@@ -5,8 +5,7 @@ import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./_app";
-import LoginView from "../components/LoginView";
-export default function Home({ postList }) {
+export default function Home() {
   const [user, setUser] = useState(null);
   const route = useRouter();
   const [list, setList] = useState([
@@ -19,6 +18,21 @@ export default function Home({ postList }) {
     //   uid: "",
     // },
   ]);
+
+  useEffect(async () => {
+    const auth = getAuth();
+    console.log("auth", auth);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // const uid = user.uid;
+        console.log(user);
+        setUser(user);
+        // ...
+      } else {
+      }
+    });
+    readData();
+  }, []);
 
   const userSignOut = () => {
     const auth = getAuth();
@@ -37,23 +51,26 @@ export default function Home({ postList }) {
   };
 
   const readData = async () => {
-    setList(postList);
+    console.log("read data");
+    const querySnapshot = await getDocs(collection(db, "post"));
+    let tmpList = [];
+
+    querySnapshot.forEach((doc) => {
+      // console.log(`data : ${doc.id} => ${doc.data().title}`);
+      const dbPost = {
+        title: doc.data().title,
+        mainText: doc.data().mainText,
+        date: doc.data().date,
+        id: doc.id,
+        uid: doc.data().uid,
+        imgName: doc.data().imgName,
+      };
+      console.log(dbPost);
+      tmpList.push(dbPost);
+    });
+    setList(tmpList);
   };
 
-  useEffect(async () => {
-    const auth = getAuth();
-    console.log("auth", auth);
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // const uid = user.uid;
-        console.log(user);
-        setUser(user);
-        // ...
-      } else {
-      }
-    });
-    readData();
-  }, [postList]);
   return (
     <div>
       {user ? (
@@ -73,7 +90,7 @@ export default function Home({ postList }) {
           </div>
 
           <div className="post-zone">
-            <h1>Post </h1>
+            <h1>Latest</h1>
             <Link href={`/addPost`}>
               <a>
                 <button>add post</button>
@@ -101,7 +118,10 @@ export default function Home({ postList }) {
       ) : (
         <>
           <>Not Logged in</>
-          <LoginView />
+
+          <Link href="/login">
+            <a>Go Sign In</a>
+          </Link>
         </>
       )}
       <style jsx>{`
@@ -113,6 +133,7 @@ export default function Home({ postList }) {
           display: flex;
           flex-direction: column;
           align-items: center;
+          margin-top: 10%;
         }
         .post-zone {
           flex: 4;

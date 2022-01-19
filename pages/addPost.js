@@ -128,6 +128,7 @@ export default function addPost() {
             placeholder="제목"
             value={title}
             onChange={onChange}
+            required
           ></input>
           <input
             type="file"
@@ -142,6 +143,7 @@ export default function addPost() {
             placeholder="내용"
             value={mainText}
             onChange={onChange}
+            required
           ></input>
           <input type="submit" value="작성완료"></input>
         </form>

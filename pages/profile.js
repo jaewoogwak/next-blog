@@ -1,36 +1,35 @@
 import { useEffect, useState } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
 import LoginView from "../components/LoginView";
+import Link from "next/link";
 export default function Profile({ userInfo }) {
   console.log("userrrrrr", userInfo);
   const auth = getAuth();
   const [user, setUser] = useState(userInfo);
   const [displayName, setDisplayName] = useState();
   const [profileEditing, setProfileEditing] = useState(false);
+  const [nickname, setNickname] = useState("");
   console.log("userInfo", user);
 
-  //   const [email, setEmail] = useState("");
-  //   const [photoURL, setPhotoURL] = useState("");
+  const onChange = (event) => {
+    const { name, value } = event.target;
+    if (name === "nickname") {
+      setNickname(value);
+    }
+  };
 
-  //   const setProfile = () => {
-  //     setDisplayName(user.displayName);
-  //     setEmail(user.email);
-  //     setPhotoURL(user.photoURL);
-  //   };
   const onProfileUpdate = async () => {
     setProfileEditing(true);
-    // await updateProfile(auth.currentUser, {
-    //   displayName: "jaewoogwak",
-    //   photoURL: "https://example.com/jane-q-user/profile.jpg",
-    // });
+    await updateProfile(auth.currentUser, {
+      displayName: nickname,
+      // photoURL: "https://example.com/jane-q-user/profile.jpg",
+    });
   };
   const onProfileEditToggle = () => {
     setProfileEditing((prev) => !prev);
   };
 
   useEffect(() => {
-    // setUser(userInfo);
-    // setProfile();
     setUser(userInfo);
     if (user != null) {
       setDisplayName(user.displayName);
@@ -53,8 +52,10 @@ export default function Profile({ userInfo }) {
                 <input
                   className="edit-displayName"
                   type="text"
-                  name="name"
+                  name="nickname"
                   placeholder="닉네임 변경"
+                  value={nickname}
+                  onChange={onChange}
                 ></input>
 
                 <input
@@ -92,7 +93,9 @@ export default function Profile({ userInfo }) {
       ) : (
         <>
           <>Not Logged In</>
-          <LoginView />
+          <Link href="/login">
+            <a>Go Sign In</a>
+          </Link>
         </>
       )}
 

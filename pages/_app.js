@@ -42,13 +42,13 @@ export default function App({ Component, pageProps }) {
       } else {
       }
     });
-    readData();
   }, []);
 
   const readData = async () => {
     console.log("read data");
     const querySnapshot = await getDocs(collection(db, "post"));
     let tmpList = [];
+
     querySnapshot.forEach((doc) => {
       // console.log(`data : ${doc.id} => ${doc.data().title}`);
       const dbPost = {
@@ -61,14 +61,13 @@ export default function App({ Component, pageProps }) {
       };
       console.log(dbPost);
       tmpList.push(dbPost);
-      // setList((prev) => [...prev, dbPost]);
     });
     setList(tmpList);
   };
 
   return (
     <div>
-      <NavBar />
+      {user ? <NavBar /> : null}
       <Head>
         <title>jaewoogwak.log</title>
       </Head>

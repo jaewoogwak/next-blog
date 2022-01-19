@@ -5,7 +5,11 @@ export default function NavBar() {
   const route = useRouter();
   return (
     <nav>
-      <h2>jaewoogwak.log</h2>
+      <Link href={`/`}>
+        <a>
+          <h2>jaewoogwak.log</h2>
+        </a>
+      </Link>
       <div>
         <Link href={`/`}>
           <a>Home</a>
@@ -22,6 +26,10 @@ export default function NavBar() {
       </div>
 
       <style jsx>{`
+        a {
+          text-decoration: none;
+          color: black;
+        }
         nav {
           display: flex;
           gap: 10px;
